@@ -1,14 +1,28 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Profile, Post, CommentPost
+from .forms import NewPostForm
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == 'POST':
+        form = NewPostForm(request.POST)
+        if form.is_valid():
+            p = Post(
+                author=request.user,
+                content=form.cleaned_data['content']
+            )
+            p.save()
+            return redirect(reverse('index'))
+    context = {
+        'new_post_form': NewPostForm(),
+        'posts': Post.objects.all().order_by('-time'),
+    }
+    return render(request, "network/index.html", context)
 
 
 def login_view(request):

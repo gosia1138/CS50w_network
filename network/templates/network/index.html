@@ -1,5 +1,16 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+    {% if new_post_form %}
+        {% include 'network/new_post.html' %}
+        <hr>
+    {% endif %}
+
+    <ul>
+        {% for post in posts %}
+            <li>{{post.content}}</li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}
