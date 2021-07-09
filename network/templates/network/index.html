@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block body %}
-    {% if new_post_form %}
+    {% if new_post_form and user.is_authenticated %}
         {% include 'network/new_post.html' %}
-        <hr>
+    {% else %}
+        <p class='m-3'><a href="{% url 'login' %}">Log in</a> to add posts</p>
     {% endif %}
 
-    <ul>
-        {% for post in posts %}
-            <li>{{post.content}}</li>
-        {% endfor %}
-    </ul>
+    {% for post in posts %}
+        {% include 'network/post.html' %}
+    {% endfor %}
+
 
 {% endblock %}

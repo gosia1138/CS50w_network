@@ -9,7 +9,8 @@ class User(AbstractUser):
         return '{}'.format(self.username)
 
     def posts(self):
-        return self.post_set.all()
+        return self.post_set.all().order_by('-time')
+
 
 class Profile(models.Model):
     def __str__(self):
@@ -17,6 +18,13 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default_user.jpg', upload_to='profile_pics')
     followed = models.ManyToManyField(User, related_name='followers', blank=True)
+    joined = models.DateTimeField(default=timezone.now)
+
+    def follows_count(self):
+        return len(self.followed.all())
+
+    def followers_count(self):
+        return len(self.user.followers.all())
 
 class Post(models.Model):
     def __str__(self):
@@ -25,8 +33,12 @@ class Post(models.Model):
     content = models.TextField()
     time = models.DateTimeField(default=timezone.now)
     likes = models.ManyToManyField(User, related_name='liked', blank=True)
+
     class Meta:
-        ordering = ['time']
+        ordering = ['-time']
+
+    def likes_count(self):
+        return len(self.likes.all())
 
 class CommentPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)

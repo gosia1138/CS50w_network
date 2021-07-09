@@ -1,0 +1,17 @@
+<div class="card">
+    <div class="row">
+        <div class="col-2">
+            <img class='img-fluid m-2 rounded-circle' src="{{post.author.profile.image.url}}" alt="{{post.author}} profile picture">
+        </div>
+        <div class="col-10">
+            <div class="card-body">
+                <h5 class="card-title"><a href="{% url 'profile' pk=post.author.pk %}">{{post.author}}</a></h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{post.time}}</h6>
+                <p class="card-text">{{post.content}}</p>
+                <a href="#" class="card-link">Like</a>
+                <span class="badge rounded-pill bg-warning text-dark">{{post.likes_count}}</span>
+                <a href="#" class="card-link"> Reply</a>
+            </div>
+        </div>
+    </div>
+</div>

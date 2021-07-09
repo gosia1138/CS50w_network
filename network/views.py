@@ -75,3 +75,19 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def profile_view(request, pk):
+    if request.method == "POST":
+        user = User.objects.get(pk=pk)
+        if 'follow' in request.POST:
+            request.user.profile.followed.add(user)
+        elif 'unfollow' in request.POST:
+            request.user.profile.followed.remove(user)
+        else:
+            pass
+        return redirect(reverse('profile', kwargs={'pk': pk}))
+    else:
+        context = {
+            'profile': User.objects.get(pk=pk).profile,
+        }
+        return render(request, 'network/profile.html', context)

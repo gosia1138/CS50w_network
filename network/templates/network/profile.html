@@ -1,0 +1,58 @@
+{% extends 'network/layout.html' %}
+{% block body %}
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-2">
+                <img class='img-fluid rounded-circle' src="{{profile.image.url}}" alt="profile picture">
+            </div>
+            <div class="col-10">
+                <h2>{{profile.user.username}}</h2>
+                <p class="text-muted">joined: {{profile.joined|date:"j F Y"}}</p>
+                <p class="text-muted">
+                    Follows:
+                    <span class="badge bg-light text-dark">{{profile.follows_count}}</span>
+                    Followers:
+                    <span class="badge bg-light text-dark">{{profile.followers_count}}</span></p>
+                {% if user.pk != profile.user.pk %}
+                    <form method="post">{% csrf_token %}
+                        {% if profile.user in user.profile.followed.all %}
+                            <button class="btn btn-outline-primary btn-sm" type="submit" name="unfollow">Unfollow</button>
+                        {% else %}
+                            <button class="btn btn-outline-primary btn-sm" type="submit" name="follow">Follow</button>
+                        {% endif %}
+
+                    </form>
+                {% else %}
+                    <a type='button' class="btn btn-outline-primary btn-sm" href="#">Update profile</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr>
+                {% for post in profile.user.posts %}
+                    {% include 'network/post.html' %}
+
+                    <!-- <div class="card">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class='img-fluid m-2 rounded-circle' src="{{post.author.profile.image.url}}" alt="{{post.author}} profile picture">
+                            </div>
+                            <div class="col-10">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{post.author}}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{post.time}}</h6>
+                                    <p class="card-text">{{post.content}}</p>
+                                    <a href="#" class="card-link">Like</a>
+                                    <span class="badge rounded-pill bg-warning text-dark">{{post.likes_count}}</span>
+                                    <a href="#" class="card-link"> Reply</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
