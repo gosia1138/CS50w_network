@@ -1,16 +1,16 @@
 {% extends "network/layout.html" %}
 {% load static %}
+{% load my_tags %}
 
 {% block body %}
+    {{ page_count|json_script:"hello" }}
     {% if new_post_form and user.is_authenticated %}
         {% include 'network/new_post.html' %}
     {% else %}
         <p class='m-3'><a href="{% url 'login' %}">Log in</a> to add posts</p>
     {% endif %}
 
-    {% for post in posts %}
-        {% include 'network/post.html' %}
-    {% endfor %}
+    {% include 'network/post.html' %}
 
 
 {% endblock %}

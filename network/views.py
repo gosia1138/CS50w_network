@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -19,12 +20,17 @@ def index(request):
             )
             p.save()
             return redirect(reverse('index'))
-    posts = Post.objects.all().order_by('-time')
-    context = {
-        'new_post_form': NewPostForm(),
-        'posts': posts,
-    }
-    return render(request, "network/index.html", context)
+    else:
+        posts = Post.objects.all().order_by('-time')
+        page = request.GET.get('page', 1)
+        pag = Paginator(posts, 5)
+        post_page = pag.page(page)
+        context = {
+            'new_post_form': NewPostForm(),
+            'posts': post_page,
+            'page_count': pag.num_pages,
+        }
+        return render(request, "network/index.html", context)
 
 
 def login_view(request):
@@ -90,15 +96,26 @@ def profile_view(request, pk):
             pass
         return redirect(reverse('profile', kwargs={'pk': pk}))
     else:
+        user = User.objects.get(pk=pk)
+        posts = user.posts()
+        page = request.GET.get('page', 1)
+        pag = Paginator(posts, 5)
+        post_page = pag.page(page)
         context = {
-            'profile': User.objects.get(pk=pk).profile,
-            'posts': User.objects.get(pk=pk).posts,
+            'profile': user.profile,
+            'posts': post_page,
+            'page_count': pag.num_pages,
         }
         return render(request, 'network/profile.html', context)
 
 @login_required
 def following_view(request):
+    posts = request.user.profile.followed_posts()
+    page = request.GET.get('page', 1)
+    pag = Paginator(posts, 5)
+    post_page = pag.page(page)
     context = {
-        'posts': request.user.profile.followed_posts
+        'posts': post_page,
+        'page_count': pag.num_pages,
     }
     return render(request, "network/following.html", context)
