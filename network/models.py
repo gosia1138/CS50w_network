@@ -26,6 +26,11 @@ class Profile(models.Model):
     def followers_count(self):
         return len(self.user.followers.all())
 
+    def followed_posts(self):
+        followed_users = self.followed.all()
+        return Post.objects.filter(author__in=followed_users)
+
+
 class Post(models.Model):
     def __str__(self):
         return 'at {} {} wrote: {}'.format(self.time, self.author, self.content)

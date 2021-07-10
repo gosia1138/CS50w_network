@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -18,9 +19,10 @@ def index(request):
             )
             p.save()
             return redirect(reverse('index'))
+    posts = Post.objects.all().order_by('-time')
     context = {
         'new_post_form': NewPostForm(),
-        'posts': Post.objects.all().order_by('-time'),
+        'posts': posts,
     }
     return render(request, "network/index.html", context)
 
@@ -76,6 +78,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+@login_required
 def profile_view(request, pk):
     if request.method == "POST":
         user = User.objects.get(pk=pk)
@@ -89,5 +92,13 @@ def profile_view(request, pk):
     else:
         context = {
             'profile': User.objects.get(pk=pk).profile,
+            'posts': User.objects.get(pk=pk).posts,
         }
         return render(request, 'network/profile.html', context)
+
+@login_required
+def following_view(request):
+    context = {
+        'posts': request.user.profile.followed_posts
+    }
+    return render(request, "network/following.html", context)
