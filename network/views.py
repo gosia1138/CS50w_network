@@ -1,10 +1,12 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Profile, Post, CommentPost
 from .forms import NewPostForm
@@ -119,3 +121,24 @@ def following_view(request):
         'page_count': pag.num_pages,
     }
     return render(request, "network/following.html", context)
+
+
+# ----- APIs -----
+
+@csrf_exempt
+@login_required
+def edit_post(request, id):
+    try:
+        post = Post.objects.get(pk=id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found"}, status=404)
+
+    if request.method == 'GET':
+        return JsonResponse(email.serialize())
+    elif request.method == 'PUT' and post.author == request.user:
+        data = json.loads(request.body)
+        if data.get('content') is not None:
+            post.content = data['content']
+            post.save()
+        return HttpResponse(status=200)
+    return HttpResponse(status=403)

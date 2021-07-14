@@ -1,28 +1,45 @@
-
+{% load static %}
 {% load my_tags %}
-{% for post in posts %}
 
+<!-- POSTS -->
+
+{% for post in posts %}
     <div class="card">
         <div class="row">
             <div class="col-2">
                 <img class='img-fluid m-2 rounded-circle' src="{{post.author.profile.image.url}}" alt="{{post.author}} profile picture">
             </div>
             <div class="col-10">
-                <div class="card-body">
+                <!-- EDIT POST WINDOW -->
+                {% if user == post.author %}
+                    <div class="card-body" id="textarea_{{ post.id }}" style="display:none;">
+                        <form id='form_{{ post.id }}'>
+                            <textarea class='form-control' id="content_{{ post.id }}">{{ post.content }}</textarea>
+                            <input class="btn btn-primary my-1 btn-sm" type="submit" value="Update">
+                        </form>
+                    </div>
+                {% endif %}
+                <!-- POST CONTENT -->
+                <div class="card-body" id='post_{{ post.id }}'>
                     <h5 class="card-title"><a href="{% url 'profile' pk=post.author.pk %}">{{post.author}}</a></h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{post.time}}</h6>
-                    <p class="card-text">{{post.content}}</p>
+                    <!-- POST TEXT -->
+                    <p class="card-text" id='card-text_{{ post.id }}'>{{post.content}}</p>
                     <a href="#" class="card-link">Like</a>
                     <span class="badge rounded-pill bg-warning text-dark">{{post.likes_count}}</span>
-                    <a href="#" class="card-link"> Reply</a>
+                    <a href="javascript:void(0)" class="card-link"> Reply</a>
+                    {% if user == post.author %}
+                        <a href="javascript:void(0)" class="card-link edit_link" id="edit_{{ post.id }}">Edit</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-
 {% endfor %}
 
 <br>
+
+<!-- PAGINATION -->
 
 {% if page_count > 1 %}
     <nav aria-label="Pagination">

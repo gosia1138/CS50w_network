@@ -12,6 +12,9 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("profile/<int:pk>/", views.profile_view, name="profile"),
     path("following", views.following_view, name="following"),
+
+    # APIs
+    path('edit_post/<int:id>', views.edit_post, name='edit_post'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
