@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Profile, Post, CommentPost
+from .models import User, Profile, Post
 from .forms import NewPostForm
 
 
@@ -133,12 +133,25 @@ def edit_post(request, id):
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=404)
 
-    if request.method == 'GET':
-        return JsonResponse(email.serialize())
-    elif request.method == 'PUT' and post.author == request.user:
+    if request.method == 'PUT':
         data = json.loads(request.body)
-        if data.get('content') is not None:
-            post.content = data['content']
-            post.save()
-        return HttpResponse(status=200)
-    return HttpResponse(status=403)
+        if data['route'] == 'edit' and post.author == request.user:
+            if data.get('content') is not None:
+                post.content = data['content']
+                post.save()
+                return HttpResponse(status=200)
+            else:
+                return JsonResponse({"error": "Post not found"}, status=404)
+        elif data['route'] == 'like':
+            if request.user in post.likes.all():
+                post.likes.remove(request.user)
+                return JsonResponse({
+                    "likes_count": post.likes_count(),
+                    }, status=200)
+            else:
+                post.likes.add(request.user)
+                return JsonResponse({
+                    "likes_count": post.likes_count(),
+                    }, status=200)
+    else:
+        return HttpResponse(status=403)

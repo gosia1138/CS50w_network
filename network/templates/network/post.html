@@ -4,33 +4,68 @@
 <!-- POSTS -->
 
 {% for post in posts %}
-    <div class="card">
+    <div class="card p-3">
         <div class="row">
+            <!-- PROFILE PICTURE -->
             <div class="col-2">
                 <img class='img-fluid m-2 rounded-circle' src="{{post.author.profile.image.url}}" alt="{{post.author}} profile picture">
             </div>
+            <!-- CARD CONTENT -->
             <div class="col-10">
-                <!-- EDIT POST WINDOW -->
-                {% if user == post.author %}
-                    <div class="card-body" id="textarea_{{ post.id }}" style="display:none;">
-                        <form id='form_{{ post.id }}'>
-                            <textarea class='form-control' id="content_{{ post.id }}">{{ post.content }}</textarea>
-                            <input class="btn btn-primary my-1 btn-sm" type="submit" value="Update">
-                        </form>
+                <div class="container">
+                    <div class="row">
+                        <!-- PROFILE NAME AND DATE POSTED -->
+                        <div class="col">
+                            <h5 class="card-title"><a href="{% url 'profile' pk=post.author.pk %}">{{post.author}}</a></h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{post.time}}</h6>
+                        </div>
                     </div>
-                {% endif %}
-                <!-- POST CONTENT -->
-                <div class="card-body" id='post_{{ post.id }}'>
-                    <h5 class="card-title"><a href="{% url 'profile' pk=post.author.pk %}">{{post.author}}</a></h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{post.time}}</h6>
-                    <!-- POST TEXT -->
-                    <p class="card-text" id='card-text_{{ post.id }}'>{{post.content}}</p>
-                    <a href="#" class="card-link">Like</a>
-                    <span class="badge rounded-pill bg-warning text-dark">{{post.likes_count}}</span>
-                    <a href="javascript:void(0)" class="card-link"> Reply</a>
-                    {% if user == post.author %}
-                        <a href="javascript:void(0)" class="card-link edit_link" id="edit_{{ post.id }}">Edit</a>
-                    {% endif %}
+                    <div class="row">
+                        <!-- CONTEND AND EDIT WINDOW -->
+                        <div class="col">
+                            <div class="container">
+                                <div class="row">
+                                    <!-- CONTENT AND EDIT -->
+                                    <div class="col-11 px-0">
+                                        <!-- CONTENT -->
+                                        <div id='post_{{ post.id }}'>
+                                            <p class="card-text" id='card-text_{{ post.id }}'>{{post.content}}</p>
+                                        </div>
+                                        <!-- EDIT -->
+                                        {% if user == post.author %}
+                                            <div id='textarea_{{ post.id }}' style="display:none;">
+                                                <form id='form_{{ post.id }}'>
+                                                    <textarea class='form-control' id="content_{{ post.id }}">{{ post.content }}</textarea>
+                                                    <input class="btn btn-outline-primary my-1 btn-sm" type="submit" value="Update">
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <!-- EDIT BUTTON -->
+                                    <div class="col-1">
+                                        {% if user == post.author %}
+                                            <a href="javascript:void(0)" class="card-link edit_link" id="edit_{{ post.id }}">
+                                                <span class="material-icons">edit_note</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- LIKES COUNT AND BUTTON -->
+                        <div class="col">
+                            <a href="javascript:void(0)" class="card-link like_link p-0" id="like_{{ post.id }}">
+                                {% if user in post.likes.all %}
+                                    <span class='material-icons align-middle liked_{{ post.id }}' id='liked'>favorite</span>
+                                {% else %}
+                                    <span class='material-icons align-middle liked_{{ post.id }}' id='nliked'>favorite_border</span>
+                                {% endif %}
+                            </a>
+                            <span class='align-middle' id='likes_count_{{post.id}}'>{{post.likes_count}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

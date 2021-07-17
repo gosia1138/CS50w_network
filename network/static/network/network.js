@@ -3,10 +3,15 @@ document.addEventListener('DOMContentLoaded', function() {
     for(let edit_link of edit_links){
         edit_link.addEventListener('click', () => edit_post(edit_link));
     };
+    like_links = document.getElementsByClassName('like_link');
+    for(let like_link of like_links){
+        like_link.addEventListener('click', () => like_post(like_link));
+    };
 });
 
-function edit_post(edit_link) {
-    id = edit_link.id.slice(5);
+
+function edit_post(link) {
+    const id = link.id.slice(5);
     document.querySelector(`#textarea_${id}`).style.display = 'block';
     document.querySelector(`#textarea_${id}`).focus();
     document.querySelector(`#post_${id}`).style.display = 'none';
@@ -16,6 +21,7 @@ function edit_post(edit_link) {
             credentials: 'same-origin',
             method: 'PUT',
             body: JSON.stringify({
+                route: 'edit',
                 content: new_content,
             })
         });
@@ -24,4 +30,25 @@ function edit_post(edit_link) {
         document.querySelector(`#post_${id}`).style.display = 'block';
         return false;
     };
+};
+
+
+function like_post(link, route) {
+    const id = link.id.slice(5);
+    fetch(`/edit_post/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            route: 'like',
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.querySelector(`#likes_count_${id}`).innerHTML = data.likes_count;
+    });
+    if (document.querySelector(`.liked_${id}`).innerHTML === 'favorite') {
+        document.querySelector(`.liked_${id}`).innerHTML = 'favorite_border';
+    } else {
+        document.querySelector(`.liked_${id}`).innerHTML = 'favorite';
+    }
+
 }

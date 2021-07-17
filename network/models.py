@@ -44,10 +44,3 @@ class Post(models.Model):
 
     def likes_count(self):
         return len(self.likes.all())
-
-class CommentPost(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    time = models.DateTimeField(default=timezone.now)
-    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
