@@ -37,7 +37,7 @@
                                                 <form id='form_{{ post.id }}'>
                                                     <textarea class='form-control' id="content_{{ post.id }}">{{ post.content }}</textarea>
                                                     <input class="btn btn-outline-primary my-1 btn-sm" type="submit" value="Update">
-                                                    <button class="btn btn-outline-warning my-1 btn-sm" type="button" id='cancel'>Cancel</button>
+                                                    <button class="btn btn-outline-warning my-1 btn-sm cancel" type="button" id='cancel_{{ post.id }}'>Cancel</button>
                                                 </form>
                                             </div>
                                         {% endif %}

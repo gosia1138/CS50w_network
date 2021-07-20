@@ -10,11 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
         like_link.addEventListener('click', () => like_post(like_link));
     };
     // HIDING EDIT WINDOW
-    cancel_buttons = document.querySelectorAll('#cancel').forEach(button => {
+    cancel_buttons = document.querySelectorAll('.cancel').forEach(button => {
+        const id = button.id.slice(7);
         button.addEventListener('click', () => {
             document.querySelectorAll('.textarea').forEach(element => {
                 element.style.display = 'none';
+
             });
+            document.querySelector(`#post_${id}`).style.display = 'block';
         });
     });
 });
@@ -37,7 +40,7 @@ function edit_post(link) {
                 route: 'edit',
                 content: new_content,
             })
-        });
+        })
         document.querySelector(`#textarea_${id}`).style.display = 'none';
         document.querySelector(`#card-text_${id}`).innerHTML = new_content;
         document.querySelector(`#post_${id}`).style.display = 'block';

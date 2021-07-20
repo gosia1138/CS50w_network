@@ -17,17 +17,17 @@ class Profile(models.Model):
         return '{}\'s profile'.format(self.user)
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
     image = models.ImageField(default='default_user.jpg', upload_to='profile_pics')
-    # followed = models.ManyToManyField(User, related_name='followers', blank=True)
+    followed = models.ManyToManyField(User, related_name='followers', blank=True)
 
-    # def follows_count(self):
-    #     return len(self.followed.all())
-    #
-    # def followers_count(self):
-    #     return len(self.user.followers.all())
-    #
-    # def followed_posts(self):
-    #     followed_users = self.followed.all()
-    #     return Post.objects.filter(author__in=followed_users)
+    def follows_count(self):
+        return len(self.followed.all())
+
+    def followers_count(self):
+        return len(self.user.followers.all())
+
+    def followed_posts(self):
+        followed_users = self.followed.all()
+        return Post.objects.filter(author__in=followed_users)
 
 
 class Post(models.Model):
