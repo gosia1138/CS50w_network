@@ -3,11 +3,13 @@
 {% load my_tags %}
 
 {% block body %}
-    {{ page_count|json_script:"hello" }}
+
     {% if new_post_form and user.is_authenticated %}
         {% include 'network/new_post.html' %}
     {% else %}
-        <p class='m-3'><a href="{% url 'login' %}">Log in</a> to add posts</p>
+        <div class="alert alert-primary" role="alert">
+            <a href="{% url 'login' %}">Log in</a> to add or like posts
+        </div>
     {% endif %}
     {% include 'network/post.html' %}
 

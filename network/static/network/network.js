@@ -1,17 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // EDIT LINKS
     edit_links = document.getElementsByClassName('edit_link');
     for(let edit_link of edit_links){
         edit_link.addEventListener('click', () => edit_post(edit_link));
     };
+    // LIKE/UNLIKE LOGIC TO ALL LIKE LINKS
     like_links = document.getElementsByClassName('like_link');
     for(let like_link of like_links){
         like_link.addEventListener('click', () => like_post(like_link));
     };
+    // HIDING EDIT WINDOW
+    cancel_buttons = document.querySelectorAll('#cancel').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.textarea').forEach(element => {
+                element.style.display = 'none';
+            });
+        });
+    });
 });
 
-
+// EDITING POST/HIDING OTHER EDITING WINDOWS
 function edit_post(link) {
     const id = link.id.slice(5);
+    document.querySelectorAll('.textarea').forEach(element => {
+        element.style.display = 'none';
+    });
     document.querySelector(`#textarea_${id}`).style.display = 'block';
     document.querySelector(`#textarea_${id}`).focus();
     document.querySelector(`#post_${id}`).style.display = 'none';
@@ -32,7 +45,7 @@ function edit_post(link) {
     };
 };
 
-
+//LIKINNG/UNLIKING POSTS
 function like_post(link, route) {
     const id = link.id.slice(5);
     fetch(`/edit_post/${id}`, {

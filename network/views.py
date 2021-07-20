@@ -1,4 +1,5 @@
 import json
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -9,7 +10,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Profile, Post
-from .forms import NewPostForm
+from .forms import NewPostForm, ProfileUpdateForm
 
 
 def index(request):
@@ -25,7 +26,7 @@ def index(request):
     else:
         posts = Post.objects.all().order_by('-time')
         page = request.GET.get('page', 1)
-        pag = Paginator(posts, 5)
+        pag = Paginator(posts, 10)
         post_page = pag.page(page)
         context = {
             'new_post_form': NewPostForm(),
@@ -46,11 +47,11 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
+            messages.success(request, "You are now logged in!")
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "network/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            messages.warning(request, "Invalid username and/or password")
+            return render(request, "network/login.html")
     else:
         return render(request, "network/login.html")
 
@@ -88,33 +89,47 @@ def register(request):
 
 @login_required
 def profile_view(request, pk):
+    user = User.objects.get(pk=pk)
     if request.method == "POST":
-        user = User.objects.get(pk=pk)
-        if 'follow' in request.POST:
-            request.user.profile.followed.add(user)
-        elif 'unfollow' in request.POST:
-            request.user.profile.followed.remove(user)
+        if 'profile_pic_update' in request.POST and request.user == user:
+            form = ProfileUpdateForm(request.POST, request.FILES, instance=user.profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your profile picture has been updated')
+            else:
+                messages.error(request, 'Provide a valid picture file')
+            return redirect(reverse('profile', kwargs={'pk': pk}))
         else:
-            pass
-        return redirect(reverse('profile', kwargs={'pk': pk}))
+            if 'follow' in request.POST:
+                request.user.profile.followed.add(user)
+            elif 'unfollow' in request.POST:
+                request.user.profile.followed.remove(user)
+            else:
+                pass
+            return redirect(reverse('profile', kwargs={'pk': pk}))
     else:
         user = User.objects.get(pk=pk)
         posts = user.posts()
         page = request.GET.get('page', 1)
-        pag = Paginator(posts, 5)
+        pag = Paginator(posts, 10)
         post_page = pag.page(page)
+        form = ProfileUpdateForm(instance=request.user.profile)
         context = {
             'profile': user.profile,
             'posts': post_page,
             'page_count': pag.num_pages,
+            'form': form,
         }
         return render(request, 'network/profile.html', context)
+
+
+
 
 @login_required
 def following_view(request):
     posts = request.user.profile.followed_posts()
     page = request.GET.get('page', 1)
-    pag = Paginator(posts, 5)
+    pag = Paginator(posts, 10)
     post_page = pag.page(page)
     context = {
         'posts': post_page,

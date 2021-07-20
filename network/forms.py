@@ -12,3 +12,9 @@ class NewPostForm(forms.ModelForm):
                 'rows': 5,
             }),
         }
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        exclude = ['followed']

@@ -33,10 +33,11 @@
                                         </div>
                                         <!-- EDIT -->
                                         {% if user == post.author %}
-                                            <div id='textarea_{{ post.id }}' style="display:none;">
+                                            <div class='textarea' id='textarea_{{ post.id }}' style="display:none;">
                                                 <form id='form_{{ post.id }}'>
                                                     <textarea class='form-control' id="content_{{ post.id }}">{{ post.content }}</textarea>
                                                     <input class="btn btn-outline-primary my-1 btn-sm" type="submit" value="Update">
+                                                    <button class="btn btn-outline-warning my-1 btn-sm" type="button" id='cancel'>Cancel</button>
                                                 </form>
                                             </div>
                                         {% endif %}
@@ -57,10 +58,14 @@
                         <!-- LIKES COUNT AND BUTTON -->
                         <div class="col">
                             <a href="javascript:void(0)" class="card-link like_link p-0" id="like_{{ post.id }}">
-                                {% if user in post.likes.all %}
-                                    <span class='material-icons align-middle liked_{{ post.id }}' id='liked'>favorite</span>
+                                {% if user.is_authenticated %}
+                                    {% if user in post.likes.all %}
+                                        <span class='material-icons align-middle liked_{{ post.id }}' id='liked'>favorite</span>
+                                    {% else %}
+                                        <span class='material-icons align-middle liked_{{ post.id }}' id='nliked'>favorite_border</span>
+                                    {% endif %}
                                 {% else %}
-                                    <span class='material-icons align-middle liked_{{ post.id }}' id='nliked'>favorite_border</span>
+                                    <span class='material-icons align-middle' id='nliked'>favorite_border</span>
                                 {% endif %}
                             </a>
                             <span class='align-middle' id='likes_count_{{post.id}}'>{{post.likes_count}}</span>

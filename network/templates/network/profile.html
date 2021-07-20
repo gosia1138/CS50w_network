@@ -4,6 +4,36 @@
         <div class="row mb-3">
             <div class="col-2">
                 <img class='img-fluid rounded-circle' src="{{profile.image.url}}" alt="profile picture">
+                {% if user == profile.user %}
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Change Picture
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form class="form-control" enctype='multipart/form-data' method="post">{% csrf_token %}
+                                <div class="modal-body">
+                                    {{form}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" name="profile_pic_update">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% endif %}
+
+
             </div>
             <div class="col-10">
                 <h2>{{profile.user.username}}</h2>
@@ -13,7 +43,7 @@
                     <span class="badge bg-light text-dark">{{profile.follows_count}}</span>
                     Followers:
                     <span class="badge bg-light text-dark">{{profile.followers_count}}</span></p>
-                {% if user.pk != profile.user.pk %}
+                {% if user != profile.user %}
                     <form method="post">{% csrf_token %}
                         {% if profile.user in user.profile.followed.all %}
                             <button class="btn btn-outline-primary btn-sm" type="submit" name="unfollow">Unfollow</button>
@@ -22,8 +52,6 @@
                         {% endif %}
 
                     </form>
-                {% else %}
-                    <a type='button' class="btn btn-outline-primary btn-sm" href="#">Update profile</a>
                 {% endif %}
             </div>
         </div>
