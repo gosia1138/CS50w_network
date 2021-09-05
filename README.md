@@ -1,8 +1,9 @@
-CS50’s Web Programming with Python and JavaScript - Project 4 'Network'
+## CS50’s Web Programming with Python and JavaScript - Project 4 'Network'
 
 Design a Twitter-like social network website for making posts and following users.
+[Presentation video on YouTube](https://youtu.be/wrzKORjLE0Q)
 
-Specification
+### Specification
 Using Python, JavaScript, HTML, and CSS, complete the implementation of a social network that allows users to make posts, follow other users, and “like” posts. You must fulfill the following requirements:
 
 New Post: Users who are signed in should be able to write a new text-based post by filling in text into a text area and then clicking a button to submit the post.
